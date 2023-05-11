@@ -1,4 +1,3 @@
-#!/bin/bash
 # earthformer dependencies
 pip install --upgrade pip
 python3 -m pip install torch==2.0.0+cu118 torchvision -f https://download.pytorch.org/whl/torch_stable.html
