@@ -1,0 +1,12 @@
+(leah) theator@timon:~/leah$ lsb_release -a
+No LSB modules are available.
+Distributor ID:	Ubuntu
+Description:	Ubuntu 20.04.4 LTS
+Release:	20.04
+Codename:	focal
+-------
+16/05/2023
+I tried to run the model as is and got the following error:
+RuntimeError: CUDA out of memory. Tried to allocate 96.00 MiB (GPU 0; 7.79 GiB total capacity; 6.15 GiB already allocated; 85.50 MiB free; 6.17 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Maybe we can ask to clear the cache?
+tried to set total_batch_size=10 and micro_batch_size=1 and it worked.
