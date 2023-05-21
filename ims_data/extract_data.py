@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 import h5py, png, PIL
 import numpy as np
-import os
+import os, json
 
 EUMETSAT_SAMPLE_PATH = "/ims_archive/Operational/MSG/images/HRIT_RSS/{img_type}/{year}/{month}/{day}/{year}{month}{day}{hour}{minute}.{img_format}"
 H5_FILE_NAME = "IMS_{img_type}_{year}_{start_month}{start_day}_{end_month}{end_day}.h5"
@@ -11,6 +11,7 @@ IMG_TYPES = ["MIDDLE_EAST_VIS", "MIDDLE_EAST_DAY_CLOUDS", "MIDDLE_EAST_COLORED",
 IMG_FORMATS = ["png", "jpeg"]
 CATALOG_PATH = "/ims_projects/Research/Oren/Lia_Ofir/earthformer-inference-experiments/ims_data/CATALOG.csv"
 H5_FILES_PATH = "/ims_projects/Research/Oren/Lia_Ofir/earthformer-inference-experiments/ims_data/data"
+CFG_FILE_PATH = "/ims_projects/Research/Oren/Lia_Ofir/earthformer-inference-experiments/ims_data/cfg.json"
 
 # png
 PNG_SIZE_Z = 4
@@ -82,6 +83,8 @@ def create_h5_file(catalog_df, img_type, time_delta, year, start_date, end_date,
         # append event to CATALOG
         catalog_df = catalog_df._append({'id': event_id, 'file_name': h5_file_name, 'file_index': file_index , 'time_utc': start_event_time ,'img_type': img_type, 'min_delta': time_delta.seconds/60, 'size_x': PNG_SIZE_X, 'size_y': PNG_SIZE_Y, 'size_z': PNG_SIZE_Z}, ignore_index=True)
         
+        print(f"appended event {event_id} to catalog.")
+
         # move on to the next day
         curr_date += day_time_delta
         file_index += 1
@@ -94,12 +97,24 @@ def create_h5_file(catalog_df, img_type, time_delta, year, start_date, end_date,
     return catalog_df
 
 def main():
+    # extract config
+    cfg = json.load(open(CFG_FILE_PATH, "r"))
     catalog_df = pd.DataFrame(columns=['id', 'file_name', 'file_index', 'img_type', 'time_utc', 'min_delta', 'size_x', 'size_y', 'size_z'])
-    start_date = datetime(*(2023, 1, 1))
-    end_date = datetime(*(2023, 1, 1))
-    time_delta = timedelta(minutes=5) 
-    catalog_df = create_h5_file(catalog_df, "MIDDLE_EAST_IR", time_delta, 2023, start_date, end_date)
-    print(catalog_df)
+    
+    for key in cfg.keys():
+        year = int(key)
+        img_format = cfg[key]['img_format']
+        for img_type in cfg[key]['img_types']:
+            for date_range in cfg[key]['ranges']:
+                start_date_range = date_range[0]
+                end_date_range = date_range[1]
+                start_date =  datetime(*(year, start_date_range[0], start_date_range[1]))
+                end_date = datetime(*(year, end_date_range[0], end_date_range[1]))
+                time_delta = timedelta(minutes=5) 
+    
+                catalog_df = create_h5_file(catalog_df, img_type, time_delta, year, start_date, end_date)
+    
+    catalog_df.to_csv("/ims_projects/Research/Oren/Lia_Ofir/earthformer-inference-experiments/ims_data/CATALOG.csv", index=False)
 
 if __name__ == '__main__':
     main()
