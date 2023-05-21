@@ -13,7 +13,7 @@ CATALOG_PATH = "/ims_projects/Research/Oren/Lia_Ofir/earthformer-inference-exper
 H5_FILES_PATH = "/ims_projects/Research/Oren/Lia_Ofir/earthformer-inference-experiments/ims_data/data"
 
 # png
-PNG_CHANNELS = 4
+PNG_SIZE_Z = 4
 PNG_SIZE_X = 600
 PNG_SIZE_Y = 600
 
@@ -61,15 +61,11 @@ def create_h5_file(catalog_df, img_type, time_delta, year, start_date, end_date,
             img_full_path = EUMETSAT_SAMPLE_PATH.format(year=img_year, month=img_month, day=img_day, hour=img_hour, minute=img_minute, img_format=img_format, img_type=img_type)
             if Path(img_full_path).exists():
                 if img_format == 'png':
-                    img = png.Reader(file=open(img_full_path, "rb"))
-                    raw_img = img.read()
-                    #x_size = raw_img[0]
-                    #y_size = raw_img[1]
+                    raw_img = png.Reader(file=open(img_full_path, "rb")).asRGBA8()
                     channels = raw_img[3]['planes']
                     raw_pixels = raw_img[2]
-                    pixels = np.array([list(row) for row in raw_pixels], dtype="uint8").reshape(PNG_SIZE_X, PNG_SIZE_Y, channels)
-                    padded_pixels = np.pad(pixels, [(0,0), (0,0), (0, PNG_CHANNELS-channels)] , 'constant')
-                    frames.append(padded_pixels) # pad to get homegenus pictures
+                    pixels = np.array([list(row) for row in raw_pixels], dtype="uint8").reshape(PNG_SIZE_X, PNG_SIZE_Y, PNG_SIZE_Z)
+                    frames.append(pixels)
                 if img_format == 'jpeg':
                     print('jpeg!!!')
                     exit(0)
@@ -84,7 +80,7 @@ def create_h5_file(catalog_df, img_type, time_delta, year, start_date, end_date,
         images.append(frames)
 
         # append event to CATALOG
-        catalog_df = catalog_df._append({'id': event_id, 'file_name': h5_file_name, 'file_index': file_index , 'time_utc': start_event_time ,'img_type': img_type, 'min_delta': time_delta.seconds/60, 'size_x': PNG_SIZE_X, 'size_y': PNG_SIZE_Y, 'size_z': PNG_CHANNELS}, ignore_index=True)
+        catalog_df = catalog_df._append({'id': event_id, 'file_name': h5_file_name, 'file_index': file_index , 'time_utc': start_event_time ,'img_type': img_type, 'min_delta': time_delta.seconds/60, 'size_x': PNG_SIZE_X, 'size_y': PNG_SIZE_Y, 'size_z': PNG_SIZE_Z}, ignore_index=True)
         
         # move on to the next day
         curr_date += day_time_delta
@@ -101,8 +97,8 @@ def main():
     catalog_df = pd.DataFrame(columns=['id', 'file_name', 'file_index', 'img_type', 'time_utc', 'min_delta', 'size_x', 'size_y', 'size_z'])
     start_date = datetime(*(2023, 1, 1))
     end_date = datetime(*(2023, 1, 1))
-    time_delta = timedelta(minutes=5)    
-    catalog_df = create_h5_file(catalog_df, "MIDDLE_EAST_VIS", time_delta, 2023, start_date, end_date)
+    time_delta = timedelta(minutes=5) 
+    catalog_df = create_h5_file(catalog_df, "MIDDLE_EAST_IR", time_delta, 2023, start_date, end_date)
     print(catalog_df)
 
 if __name__ == '__main__':
