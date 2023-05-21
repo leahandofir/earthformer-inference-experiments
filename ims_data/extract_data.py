@@ -49,10 +49,11 @@ def create_h5_file(catalog_df, img_type, time_delta, year, start_date, end_date,
 
         start_event_time = datetime(*(curr_date.year, curr_date.month, curr_date.day, sunrise[0], sunrise[1])) # time_utc in CATALOG
         end_event_time = datetime(*(curr_date.year, curr_date.month, curr_date.day, sunset[0], sunset[1]))
-        
+        day_full = True
+
         # open all images of this day
         curr_frame_time = start_event_time
-        while curr_frame_time <= end_event_time:
+        while curr_frame_time <= end_event_time and day_full:
             img_year = curr_frame_time.strftime("%Y")
             img_month = curr_frame_time.strftime("%m")
             img_day = curr_frame_time.strftime("%d")
@@ -67,23 +68,23 @@ def create_h5_file(catalog_df, img_type, time_delta, year, start_date, end_date,
                     raw_pixels = raw_img[2]
                     pixels = np.array([list(row) for row in raw_pixels], dtype="uint8").reshape(PNG_SIZE_X, PNG_SIZE_Y, PNG_SIZE_Z)
                     frames.append(pixels)
-                if img_format == 'jpeg':
-                    print('jpeg!!!')
-                    exit(0)
-                    #img = PIL.Image.open(img_full_path)
-                    #frames.append(np.array(img))
+            else:
+                day_full = False
 
             curr_frame_time += time_delta
 
         # append event frames and id
         event_id = curr_date.strftime("%Y%m%d")
-        ids.append(event_id)
-        images.append(frames)
+        if day_full:
+            ids.append(event_id)
+            images.append(frames)
 
-        # append event to CATALOG
-        catalog_df = catalog_df._append({'id': event_id, 'file_name': h5_file_name, 'file_index': file_index , 'time_utc': start_event_time ,'img_type': img_type, 'min_delta': time_delta.seconds/60, 'size_x': PNG_SIZE_X, 'size_y': PNG_SIZE_Y, 'size_z': PNG_SIZE_Z}, ignore_index=True)
+            # append event to CATALOG
+            catalog_df = catalog_df._append({'id': event_id, 'file_name': h5_file_name, 'file_index': file_index , 'time_utc': start_event_time ,'img_type': img_type, 'min_delta': time_delta.seconds/60, 'size_x': PNG_SIZE_X, 'size_y': PNG_SIZE_Y, 'size_z': PNG_SIZE_Z}, ignore_index=True)
         
-        print(f"appended event {event_id} to catalog.")
+            print(f"appended event {event_id} to catalog.")
+        else:
+            print(f"event {event_id} was not full.")
 
         # move on to the next day
         curr_date += day_time_delta
