@@ -14,7 +14,7 @@ tried to set total_batch_size=10 and micro_batch_size=1 and it worked.
 download from drive:
 gdown https://drive.google.com/uc?id=12dQIKL8yHYDyTiNsNtB141o0pprOuAYr
 -------
-29/05/2023 - mount the disk from IMS commands
+29/05/2023 - mount the disk from IMS commands (https://askubuntu.com/questions/177825/how-to-mount-an-external-hdd)
 df -h # see mounted storage
 sudo fdisk -l # see mounted and external storage
 sudo mount -t ntfs /dev/sdb1 /media/leah # mount storage (create the directory /media/leah first)
