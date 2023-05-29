@@ -20,3 +20,5 @@ sudo fdisk -l # see mounted and external storage
 sudo mount -t ntfs /dev/sdb1 /media/leah # mount storage (create the directory /media/leah first)
 du -sh # how much storage is in the current directory
 cd /media/leah/ # the mounted directory
+-------
+see GPU status using nvidis-smi command
