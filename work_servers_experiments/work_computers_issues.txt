@@ -10,3 +10,13 @@ I tried to run the model as is and got the following error:
 RuntimeError: CUDA out of memory. Tried to allocate 96.00 MiB (GPU 0; 7.79 GiB total capacity; 6.15 GiB already allocated; 85.50 MiB free; 6.17 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 Maybe we can ask to clear the cache?
 tried to set total_batch_size=10 and micro_batch_size=1 and it worked.
+-------
+download from drive:
+gdown https://drive.google.com/uc?id=12dQIKL8yHYDyTiNsNtB141o0pprOuAYr
+-------
+29/05/2023 - mount the disk from IMS commands
+df -h # see mounted storage
+sudo fdisk -l # see mounted and external storage
+sudo mount -t ntfs /dev/sdb1 /media/leah # mount storage (create the directory /media/leah first)
+du -sh # how much storage is in the current directory
+cd /media/leah/ # the mounted directory
