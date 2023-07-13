@@ -22,3 +22,9 @@ du -sh # how much storage is in the current directory
 cd /media/leah/ # the mounted directory
 -------
 see GPU status using nvidis-smi command
+-------
+run an experiment unattached to the ssh connection - in the ssh terminal:
+screen (enter to open a new screen)
+run your experiment (you can copy the command line from pycharm)
+ctrl+a ctrl+d (detach)
+scren -r (see all the proccess that were screened)
