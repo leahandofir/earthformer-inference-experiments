@@ -28,3 +28,22 @@ screen (enter to open a new screen)
 run your experiment (you can copy the command line from pycharm)
 ctrl+a ctrl+d (detach)
 scren -r (see all the proccess that were screened)
+-------
+30/07/2023
+noticed we had the following bug in the code:
+Traceback (most recent call last):
+  File "/home/theator/.pyenv/versions/3.8.12/lib/python3.8/threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "/home/theator/.pyenv/versions/3.8.12/lib/python3.8/threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/theator/.pyenv/versions/leah/lib/python3.8/site-packages/wandb/filesync/step_upload.py", line 172, in _thread_body
+    self._handle_event(event)
+  File "/home/theator/.pyenv/versions/leah/lib/python3.8/site-packages/wandb/filesync/step_upload.py", line 236, in _handle_event
+    self._start_upload_job(event)
+  File "/home/theator/.pyenv/versions/leah/lib/python3.8/site-packages/wandb/filesync/step_upload.py", line 257, in _start_upload_job
+    self._spawn_upload_sync(event)
+  File "/home/theator/.pyenv/versions/leah/lib/python3.8/site-packages/wandb/filesync/step_upload.py", line 292, in _spawn_upload_sync
+    self._pool.submit(run_and_notify)
+  File "/home/theator/.pyenv/versions/3.8.12/lib/python3.8/concurrent/futures/thread.py", line 179, in submit
+    raise RuntimeError('cannot schedule new futures after shutdown')
+RuntimeError: cannot schedule new futures after shutdown
