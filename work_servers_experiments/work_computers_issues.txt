@@ -47,3 +47,6 @@ Traceback (most recent call last):
   File "/home/theator/.pyenv/versions/3.8.12/lib/python3.8/concurrent/futures/thread.py", line 179, in submit
     raise RuntimeError('cannot schedule new futures after shutdown')
 RuntimeError: cannot schedule new futures after shutdown
+--------
+copy files from nala to timon: (example)
+scp /media/leah/logging/our_logs/version_3/checkpoints/last.ckpt theator@192.168.0.177:/home/theator/leah//last.ckpt
