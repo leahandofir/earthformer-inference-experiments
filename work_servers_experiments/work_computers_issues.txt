@@ -50,3 +50,5 @@ RuntimeError: cannot schedule new futures after shutdown
 --------
 copy files from nala to timon: (example)
 scp /media/leah/logging/our_logs/version_3/checkpoints/last.ckpt theator@192.168.0.177:/home/theator/leah//last.ckpt
+copy files from nala to local: (example)
+scp theator@192.168.0.142:/media/leah/logging/our_logs/version_3/checkpoints/'model-epoch=028.ckpt' ./'model-epoch=028.ckpt'
